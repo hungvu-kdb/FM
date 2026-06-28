@@ -1,0 +1,127 @@
+{
+  "app_name": "Multi-Agent Orchestrator",
+  "default_model": {
+    "type": "ollama",
+    "name": "gemma:2b",
+    "endpoint": "http://localhost:11434",
+    "temperature": 0.7,
+    "max_tokens": 2048,
+    "timeout": 30
+  },
+  "agents": [
+    {
+      "id": "super_boss_001",
+      "name": "CEO Agent",
+      "role": "super_boss",
+      "description": "Top-level coordinator for the organization",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.5,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are the CEO of a tech company. Make strategic decisions and coordinate teams.",
+      "tools": ["strategic_planning", "team_coordination", "budget_allocation"]
+    },
+    {
+      "id": "boss_backend_001",
+      "name": "Backend Manager",
+      "role": "boss",
+      "description": "Manages backend development team",
+      "parent_id": "super_boss_001",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.6,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are a backend team manager. Focus on architecture, performance, and code quality.",
+      "tools": ["code_review", "architecture_design", "performance_optimization"]
+    },
+    {
+      "id": "boss_frontend_001",
+      "name": "Frontend Manager",
+      "role": "boss",
+      "description": "Manages frontend development team",
+      "parent_id": "super_boss_001",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.6,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are a frontend team manager. Focus on UX, design systems, and performance.",
+      "tools": ["ui_design", "ux_review", "performance_optimization"]
+    },
+    {
+      "id": "worker_backend_001",
+      "name": "Backend Dev 1",
+      "role": "worker",
+      "description": "Backend developer working on API services",
+      "parent_id": "boss_backend_001",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.7,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are a backend developer. Help with API design, database optimization, and microservices.",
+      "tools": ["api_development", "database_design", "testing"]
+    },
+    {
+      "id": "worker_backend_002",
+      "name": "Backend Dev 2",
+      "role": "worker",
+      "description": "Backend developer working on data pipeline",
+      "parent_id": "boss_backend_001",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.7,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are a backend developer specializing in data pipelines. Help with ETL, data processing, and analytics.",
+      "tools": ["data_pipeline", "etl_design", "analytics"]
+    },
+    {
+      "id": "worker_frontend_001",
+      "name": "Frontend Dev 1",
+      "role": "worker",
+      "description": "Frontend developer working on React components",
+      "parent_id": "boss_frontend_001",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.7,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are a frontend developer. Help with React, component design, and state management.",
+      "tools": ["react_development", "component_design", "state_management"]
+    },
+    {
+      "id": "worker_frontend_002",
+      "name": "Frontend Dev 2",
+      "role": "worker",
+      "description": "Frontend developer working on styling and design systems",
+      "parent_id": "boss_frontend_001",
+      "model": {
+        "type": "ollama",
+        "name": "gemma:2b",
+        "endpoint": "http://localhost:11434",
+        "temperature": 0.7,
+        "max_tokens": 2048
+      },
+      "system_prompt": "You are a frontend developer specializing in design systems. Help with CSS, design tokens, and accessibility.",
+      "tools": ["design_systems", "css_styling", "accessibility"]
+    }
+  ],
+  "max_message_history": 100,
+  "enable_persistence": true,
+  "persistence_dir": ".agent_state"
+}

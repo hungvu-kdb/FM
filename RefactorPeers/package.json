@@ -1,0 +1,22 @@
+{
+  "name": "claude-peers-hierarchical",
+  "version": "0.2.0",
+  "description": "Claude-peers with hierarchical organization support (super_boss -> boss -> workers)",
+  "type": "module",
+  "main": "server-hierarchical.ts",
+  "scripts": {
+    "broker": "bun broker-hierarchical.ts",
+    "server": "bun server-hierarchical.ts",
+    "dev": "bun --watch server-hierarchical.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

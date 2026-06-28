@@ -1,0 +1,16 @@
+# Core dependencies (required for both UIs)
+requests>=2.31.0
+
+# Web UI (Flask)
+Flask>=3.0.0
+
+# Streamlit UI
+streamlit>=1.28.0
+
+# LLM backends (optional - install as needed)
+openai>=1.0.0      # For OpenAI API
+anthropic>=0.7.0   # For Anthropic API
+
+# Enhanced features (optional)
+pandas>=2.0.0      # For data display in Streamlit
+plotly>=5.0.0      # For visualizations in Streamlit

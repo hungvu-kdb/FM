@@ -1,0 +1,26 @@
+# CNN Implementation Requirements (PyTorch-based)
+# This is an ALTERNATIVE to the original face_recognition/dlib stack
+
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+facenet-pytorch>=2.5.3
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Web interface dependencies
+streamlit>=1.28.0
+pandas>=2.0.0
+requests>=2.31.0
+
+# Development / testing dependencies
+pytest>=7.0.0
+hypothesis>=6.0.0
+
+# Installation notes:
+# 1. Install PyTorch first from https://pytorch.org/get-started/locally/
+#    Example for CPU: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+#    Example for CUDA: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+# 
+# 2. Then install remaining dependencies:
+#    pip install facenet-pytorch numpy Pillow pytest hypothesis

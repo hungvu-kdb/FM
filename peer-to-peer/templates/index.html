@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent Orchestrator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            height: calc(100vh - 40px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .sidebar-header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .agent-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .agent-item {
+            padding: 15px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .agent-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-item.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .agent-role {
+            font-size: 12px;
+            color: #666;
+            display: inline-block;
+            padding: 3px 8px;
+            background: #e0e0e0;
+            border-radius: 12px;
+        }
+
+        .agent-role.super_boss {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .agent-role.boss {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .agent-role.worker {
+            background: #50c878;
+            color: white;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chat Tab */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 30px;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #667eea;
+        }
+
+        .message.assistant .message-avatar {
+            background: #50c878;
+        }
+
+        .message-content {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-role {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .message-text {
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .chat-input-container {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Agent Info Tab */
+        .info-container {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            width: 150px;
+        }
+
+        .info-value {
+            color: #333;
+            flex: 1;
+        }
+
+        /* Hierarchy Tab */
+        .hierarchy-container {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .tree-node {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .tree-node-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .tree-node-icon {
+            font-size: 24px;
+        }
+
+        .tree-node-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .tree-node-role {
+            font-size: 12px;
+            color: #666;
+            padding: 3px 8px;
+            background: #e0e0e0;
+            border-radius: 12px;
+        }
+
+        /* Stats Tab */
+        .stats-container {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+
+            .agent-list {
+                max-height: 200px;
+            }
+        }
+
+        /* Conversation Tab Styles */
+        .conversation-container {
+            padding: 30px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .conversation-setup {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .conversation-setup h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .mode-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .agent-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .agent-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .conversation-display {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+
+        .conversation-display h3 {
+            color: #333;
+        }
+
+        .conversation-turn {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .conversation-turn-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .conversation-turn-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .agent-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .agent-checkbox:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .agent-checkbox input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .agent-checkbox.checked {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        /* Settings Tab Styles */
+        .settings-container {
+            padding: 30px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .settings-container h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .settings-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .settings-card h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input[type="text"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-save {
+            background: #50c878;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #45b369;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(80, 200, 120, 0.4);
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .success-message {
+            padding: 12px 20px;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        .error-message {
+            padding: 12px 20px;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>🤖 Multi-Agent</h1>
+                <p>Orchestrator</p>
+            </div>
+            <div class="agent-list" id="agentList">
+                <div style="text-align: center; padding: 20px; color: #666;">
+                    <div class="loading"></div>
+                    <p style="margin-top: 10px;">Loading agents...</p>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn btn-primary" onclick="showHierarchy()">📊 View Hierarchy</button>
+                <button class="btn btn-secondary" onclick="clearHistory()">🗑️ Clear History</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2 id="headerTitle">Multi-Agent Orchestrator</h2>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('chat')">💬 Chat</button>
+                    <button class="tab" onclick="switchTab('conversation')">🗣️ Conversation</button>
+                    <button class="tab" onclick="switchTab('info')">ℹ️ Info</button>
+                    <button class="tab" onclick="switchTab('settings')">⚙️ Settings</button>
+                    <button class="tab" onclick="switchTab('hierarchy')">📊 Hierarchy</button>
+                    <button class="tab" onclick="switchTab('stats')">📈 Stats</button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Chat Tab -->
+                <div id="chatTab" class="tab-content active">
+                    <div class="chat-container">
+                        <div class="messages" id="messages">
+                            <div style="text-align: center; padding: 40px; color: #999;">
+                                <p>👋 Select an agent and start chatting!</p>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <div class="chat-input-wrapper">
+                                <input 
+                                    type="text" 
+                                    class="chat-input" 
+                                    id="chatInput" 
+                                    placeholder="Type your message..."
+                                    onkeypress="handleKeyPress(event)"
+                                >
+                                <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation Tab -->
+                <div id="conversationTab" class="tab-content">
+                    <div class="conversation-container">
+                        <div class="conversation-setup">
+                            <h3>Agent-to-Agent Conversation</h3>
+                            <p style="color: #666; margin-bottom: 20px;">Watch agents talk to each other in real-time</p>
+                            
+                            <div class="conversation-mode">
+                                <label style="font-weight: 600; margin-bottom: 10px; display: block;">Conversation Mode:</label>
+                                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                                    <button class="mode-btn active" onclick="setConversationMode('two')" id="modeTwoBtn">
+                                        Two Agents
+                                    </button>
+                                    <button class="mode-btn" onclick="setConversationMode('group')" id="modeGroupBtn">
+                                        Group Chat
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="twoAgentMode">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                    <div>
+                                        <label style="font-weight: 600; margin-bottom: 5px; display: block;">Agent 1:</label>
+                                        <select id="agent1Select" class="agent-select">
+                                            <option value="">Select first agent...</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="font-weight: 600; margin-bottom: 5px; display: block;">Agent 2:</label>
+                                        <select id="agent2Select" class="agent-select">
+                                            <option value="">Select second agent...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="groupMode" style="display: none;">
+                                <label style="font-weight: 600; margin-bottom: 10px; display: block;">Select Agents (2+):</label>
+                                <div id="groupAgentsList" style="margin-bottom: 20px;">
+                                    <!-- Checkboxes will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="font-weight: 600; margin-bottom: 5px; display: block;">Initial Message:</label>
+                                <input 
+                                    type="text" 
+                                    id="initialMessage" 
+                                    class="chat-input" 
+                                    placeholder="Start the conversation with..."
+                                    value="Hello! Let's discuss our project."
+                                >
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="font-weight: 600; margin-bottom: 5px; display: block;">Max Turns:</label>
+                                <input 
+                                    type="number" 
+                                    id="maxTurns" 
+                                    class="chat-input" 
+                                    value="5"
+                                    min="1"
+                                    max="20"
+                                    style="width: 100px;"
+                                >
+                            </div>
+                            
+                            <button class="send-btn" id="startConversationBtn" onclick="startConversation()" style="width: 100%;">
+                                🗣️ Start Conversation
+                            </button>
+                        </div>
+                        
+                        <div class="conversation-display" id="conversationDisplay" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h3>Conversation in Progress</h3>
+                                <button class="btn btn-secondary" onclick="stopConversation()">Stop</button>
+                            </div>
+                            <div class="messages" id="conversationMessages">
+                                <!-- Conversation messages will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Tab -->
+                <div id="infoTab" class="tab-content">
+                    <div class="info-container" id="infoContainer">
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <p>Select an agent to view details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settingsTab" class="tab-content">
+                    <div class="settings-container">
+                        <h3>Agent Configuration</h3>
+                        <p style="color: #666; margin-bottom: 20px;">Edit agent prompts and settings</p>
+                        
+                        <div id="settingsContent">
+                            <div style="text-align: center; padding: 40px; color: #999;">
+                                <p>Select an agent to configure</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hierarchy Tab -->
+                <div id="hierarchyTab" class="tab-content">
+                    <div class="hierarchy-container" id="hierarchyContainer">
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <div class="loading"></div>
+                            <p style="margin-top: 10px;">Loading hierarchy...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Tab -->
+                <div id="statsTab" class="tab-content">
+                    <div class="stats-container" id="statsContainer">
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <div class="loading"></div>
+                            <p style="margin-top: 10px;">Loading statistics...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAgent = null;
+        let agents = [];
+        let messageHistory = {};
+        let conversationMode = 'two';
+        let conversationActive = false;
+        let conversationReader = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAgents();
+            loadStats();
+            loadHierarchy();
+            populateAgentSelects();
+        });
+
+        // Load agents
+        async function loadAgents() {
+            try {
+                const response = await fetch('/api/agents');
+                agents = await response.json();
+                
+                const agentList = document.getElementById('agentList');
+                agentList.innerHTML = '';
+                
+                agents.forEach(agent => {
+                    const agentItem = document.createElement('div');
+                    agentItem.className = 'agent-item';
+                    agentItem.onclick = () => selectAgent(agent.id);
+                    
+                    agentItem.innerHTML = `
+                        <div class="agent-name">${agent.name}</div>
+                        <span class="agent-role ${agent.role}">${agent.role.replace('_', ' ')}</span>
+                    `;
+                    
+                    agentList.appendChild(agentItem);
+                });
+                
+                // Select first agent
+                if (agents.length > 0) {
+                    selectAgent(agents[0].id);
+                }
+            } catch (error) {
+                console.error('Error loading agents:', error);
+                document.getElementById('agentList').innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #e74c3c;">
+                        <p>❌ Error loading agents</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Select agent
+        async function selectAgent(agentId) {
+            currentAgent = agentId;
+            
+            // Update UI
+            document.querySelectorAll('.agent-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.agent-item').classList.add('active');
+            
+            const agent = agents.find(a => a.id === agentId);
+            document.getElementById('headerTitle').textContent = `Chat with ${agent.name}`;
+            
+            // Load agent history
+            await loadAgentHistory(agentId);
+            
+            // Load agent info
+            await loadAgentInfo(agentId);
+            
+            // Load agent settings
+            await loadAgentSettings(agentId);
+        }
+
+        // Load agent history
+        async function loadAgentHistory(agentId) {
+            try {
+                const response = await fetch(`/api/agent/${agentId}/history`);
+                const history = await response.json();
+                
+                messageHistory[agentId] = history;
+                displayMessages(history);
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        // Display messages
+        function displayMessages(messages) {
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.innerHTML = '';
+            
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <p>👋 Start a conversation!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.role}`;
+                
+                const emoji = msg.role === 'user' ? '👤' : '🤖';
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${emoji}</div>
+                    <div class="message-content">
+                        <div class="message-role">${msg.role}</div>
+                        <div class="message-text">${escapeHtml(msg.content)}</div>
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageDiv);
+            });
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Send message
+        async function sendMessage() {
+            if (!currentAgent) {
+                alert('Please select an agent first');
+                return;
+            }
+            
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Clear input
+            input.value = '';
+            
+            // Disable send button
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<div class="loading"></div>';
+            
+            // Add user message to UI
+            if (!messageHistory[currentAgent]) {
+                messageHistory[currentAgent] = [];
+            }
+            messageHistory[currentAgent].push({ role: 'user', content: message });
+            displayMessages(messageHistory[currentAgent]);
+            
+            try {
+                // Stream response
+                const response = await fetch(`/api/agent/${currentAgent}/stream`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message }),
+                });
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let assistantMessage = '';
+                
+                // Add assistant message placeholder
+                messageHistory[currentAgent].push({ role: 'assistant', content: '' });
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = JSON.parse(line.slice(6));
+                            if (data.chunk) {
+                                assistantMessage += data.chunk;
+                                messageHistory[currentAgent][messageHistory[currentAgent].length - 1].content = assistantMessage;
+                                displayMessages(messageHistory[currentAgent]);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Error sending message. Please try again.');
+            } finally {
+                // Re-enable send button
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+            }
+        }
+
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Load agent info
+        async function loadAgentInfo(agentId) {
+            try {
+                const response = await fetch(`/api/agent/${agentId}`);
+                const agent = await response.json();
+                
+                const infoContainer = document.getElementById('infoContainer');
+                infoContainer.innerHTML = `
+                    <div class="info-card">
+                        <h3>Agent Details</h3>
+                        <div class="info-row">
+                            <div class="info-label">Name</div>
+                            <div class="info-value">${agent.name}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Role</div>
+                            <div class="info-value"><span class="agent-role ${agent.role}">${agent.role.replace('_', ' ')}</span></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Description</div>
+                            <div class="info-value">${agent.description}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Model</div>
+                            <div class="info-value">${agent.model}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Parent</div>
+                            <div class="info-value">${agent.parent_id || 'None'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Message Count</div>
+                            <div class="info-value">${agent.message_count}</div>
+                        </div>
+                    </div>
+                    
+                    ${agent.tools && agent.tools.length > 0 ? `
+                    <div class="info-card">
+                        <h3>Available Tools</h3>
+                        ${agent.tools.map(tool => `<div class="info-row"><div class="info-value">${tool}</div></div>`).join('')}
+                    </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                console.error('Error loading agent info:', error);
+            }
+        }
+
+        // Load hierarchy
+        async function loadHierarchy() {
+            try {
+                const response = await fetch('/api/hierarchy');
+                const tree = await response.json();
+                
+                const hierarchyContainer = document.getElementById('hierarchyContainer');
+                hierarchyContainer.innerHTML = '<h3 style="margin-bottom: 20px;">Organization Hierarchy</h3>';
+                
+                if (tree.id) {
+                    renderTreeNode(tree, hierarchyContainer);
+                } else {
+                    hierarchyContainer.innerHTML = '<p style="text-align: center; color: #999;">No hierarchy available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading hierarchy:', error);
+            }
+        }
+
+        // Render tree node
+        function renderTreeNode(node, container, level = 0) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'tree-node';
+            nodeDiv.style.marginLeft = `${level * 30}px`;
+            
+            const roleEmoji = {
+                'super_boss': '👑',
+                'boss': '💼',
+                'worker': '👤'
+            };
+            
+            nodeDiv.innerHTML = `
+                <div class="tree-node-content">
+                    <div class="tree-node-icon">${roleEmoji[node.role] || '👤'}</div>
+                    <div class="tree-node-name">${node.name}</div>
+                    <span class="tree-node-role">${node.role.replace('_', ' ')}</span>
+                </div>
+            `;
+            
+            container.appendChild(nodeDiv);
+            
+            if (node.children && node.children.length > 0) {
+                node.children.forEach(child => {
+                    renderTreeNode(child, container, level + 1);
+                });
+            }
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                
+                const statsContainer = document.getElementById('statsContainer');
+                statsContainer.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total_agents}</div>
+                            <div class="stat-label">Total Agents</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total_messages}</div>
+                            <div class="stat-label">Total Messages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.role_counts.boss || 0}</div>
+                            <div class="stat-label">Bosses</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.role_counts.worker || 0}</div>
+                            <div class="stat-label">Workers</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Application Info</h3>
+                        <div class="info-row">
+                            <div class="info-label">App Name</div>
+                            <div class="info-value">${stats.app_name}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Super Bosses</div>
+                            <div class="info-value">${stats.role_counts.super_boss || 0}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Bosses</div>
+                            <div class="info-value">${stats.role_counts.boss || 0}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Workers</div>
+                            <div class="info-value">${stats.role_counts.worker || 0}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Switch tab
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            
+            // Reload data if needed
+            if (tabName === 'stats') {
+                loadStats();
+            } else if (tabName === 'hierarchy') {
+                loadHierarchy();
+            } else if (tabName === 'conversation') {
+                populateAgentSelects();
+            } else if (tabName === 'settings' && currentAgent) {
+                loadAgentSettings(currentAgent);
+            }
+        }
+
+        // Show hierarchy
+        function showHierarchy() {
+            switchTab('hierarchy');
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.includes('Hierarchy')) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Clear history
+        async function clearHistory() {
+            if (!currentAgent) {
+                alert('Please select an agent first');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to clear the chat history?')) {
+                return;
+            }
+            
+            try {
+                await fetch(`/api/agent/${currentAgent}/clear`, {
+                    method: 'POST',
+                });
+                
+                messageHistory[currentAgent] = [];
+                displayMessages([]);
+            } catch (error) {
+                console.error('Error clearing history:', error);
+                alert('Error clearing history. Please try again.');
+            }
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Populate agent selects for conversation
+        function populateAgentSelects() {
+            setTimeout(() => {
+                const agent1Select = document.getElementById('agent1Select');
+                const agent2Select = document.getElementById('agent2Select');
+                const groupAgentsList = document.getElementById('groupAgentsList');
+                
+                if (agent1Select && agent2Select && agents.length > 0) {
+                    agent1Select.innerHTML = '<option value="">Select first agent...</option>';
+                    agent2Select.innerHTML = '<option value="">Select second agent...</option>';
+                    
+                    agents.forEach(agent => {
+                        const option1 = document.createElement('option');
+                        option1.value = agent.id;
+                        option1.textContent = `${agent.name} (${agent.role})`;
+                        agent1Select.appendChild(option1);
+                        
+                        const option2 = document.createElement('option');
+                        option2.value = agent.id;
+                        option2.textContent = `${agent.name} (${agent.role})`;
+                        agent2Select.appendChild(option2);
+                    });
+                }
+                
+                if (groupAgentsList && agents.length > 0) {
+                    groupAgentsList.innerHTML = '';
+                    agents.forEach(agent => {
+                        const checkbox = document.createElement('div');
+                        checkbox.className = 'agent-checkbox';
+                        checkbox.innerHTML = `
+                            <input type="checkbox" id="group_${agent.id}" value="${agent.id}" onchange="updateGroupSelection()">
+                            <label for="group_${agent.id}" style="cursor: pointer; flex: 1;">
+                                ${agent.name} (${agent.role})
+                            </label>
+                        `;
+                        groupAgentsList.appendChild(checkbox);
+                    });
+                }
+            }, 500);
+        }
+
+        // Set conversation mode
+        function setConversationMode(mode) {
+            conversationMode = mode;
+            
+            document.getElementById('modeTwoBtn').classList.toggle('active', mode === 'two');
+            document.getElementById('modeGroupBtn').classList.toggle('active', mode === 'group');
+            
+            document.getElementById('twoAgentMode').style.display = mode === 'two' ? 'block' : 'none';
+            document.getElementById('groupMode').style.display = mode === 'group' ? 'block' : 'none';
+        }
+
+        // Update group selection
+        function updateGroupSelection() {
+            const checkboxes = document.querySelectorAll('#groupAgentsList input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                const parent = cb.closest('.agent-checkbox');
+                if (cb.checked) {
+                    parent.classList.add('checked');
+                } else {
+                    parent.classList.remove('checked');
+                }
+            });
+        }
+
+        // Start conversation
+        async function startConversation() {
+            const initialMessage = document.getElementById('initialMessage').value.trim();
+            const maxTurns = parseInt(document.getElementById('maxTurns').value);
+            
+            if (!initialMessage) {
+                alert('Please enter an initial message');
+                return;
+            }
+            
+            let endpoint, body;
+            
+            if (conversationMode === 'two') {
+                const agent1Id = document.getElementById('agent1Select').value;
+                const agent2Id = document.getElementById('agent2Select').value;
+                
+                if (!agent1Id || !agent2Id) {
+                    alert('Please select both agents');
+                    return;
+                }
+                
+                if (agent1Id === agent2Id) {
+                    alert('Please select different agents');
+                    return;
+                }
+                
+                endpoint = '/api/conversation/start';
+                body = {
+                    agent1_id: agent1Id,
+                    agent2_id: agent2Id,
+                    initial_message: initialMessage,
+                    max_turns: maxTurns
+                };
+            } else {
+                const checkboxes = document.querySelectorAll('#groupAgentsList input[type="checkbox"]:checked');
+                const agentIds = Array.from(checkboxes).map(cb => cb.value);
+                
+                if (agentIds.length < 2) {
+                    alert('Please select at least 2 agents');
+                    return;
+                }
+                
+                endpoint = '/api/conversation/group';
+                body = {
+                    agent_ids: agentIds,
+                    initial_message: initialMessage,
+                    max_turns: maxTurns
+                };
+            }
+            
+            // Show conversation display
+            document.querySelector('.conversation-setup').style.display = 'none';
+            document.getElementById('conversationDisplay').style.display = 'block';
+            
+            const conversationMessages = document.getElementById('conversationMessages');
+            conversationMessages.innerHTML = `
+                <div class="conversation-turn">
+                    <div class="conversation-turn-header">
+                        <span>🎬 Starting conversation...</span>
+                    </div>
+                    <div class="conversation-turn-content">${escapeHtml(initialMessage)}</div>
+                </div>
+            `;
+            
+            conversationActive = true;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                });
+                
+                const reader = response.body.getReader();
+                conversationReader = reader;
+                const decoder = new TextDecoder();
+                
+                let currentTurnDiv = null;
+                let currentSpeaker = '';
+                let currentMessage = '';
+                
+                while (conversationActive) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = JSON.parse(line.slice(6));
+                            
+                            if (data.type === 'turn_start') {
+                                currentSpeaker = data.speaker;
+                                currentMessage = '';
+                                
+                                currentTurnDiv = document.createElement('div');
+                                currentTurnDiv.className = 'conversation-turn';
+                                currentTurnDiv.innerHTML = `
+                                    <div class="conversation-turn-header">
+                                        <span>💬 ${escapeHtml(currentSpeaker)} is speaking...</span>
+                                    </div>
+                                    <div class="conversation-turn-content"></div>
+                                `;
+                                conversationMessages.appendChild(currentTurnDiv);
+                                conversationMessages.scrollTop = conversationMessages.scrollHeight;
+                            } else if (data.type === 'chunk' && currentTurnDiv) {
+                                currentMessage += data.chunk;
+                                const contentDiv = currentTurnDiv.querySelector('.conversation-turn-content');
+                                contentDiv.textContent = currentMessage;
+                                conversationMessages.scrollTop = conversationMessages.scrollHeight;
+                            } else if (data.type === 'turn_end' && currentTurnDiv) {
+                                const headerDiv = currentTurnDiv.querySelector('.conversation-turn-header');
+                                headerDiv.innerHTML = `<span>💬 ${escapeHtml(data.speaker)}</span>`;
+                            } else if (data.type === 'done') {
+                                conversationActive = false;
+                                const doneDiv = document.createElement('div');
+                                doneDiv.className = 'conversation-turn';
+                                doneDiv.style.borderLeftColor = '#50c878';
+                                doneDiv.innerHTML = `
+                                    <div class="conversation-turn-header" style="color: #50c878;">
+                                        <span>✅ Conversation completed!</span>
+                                    </div>
+                                `;
+                                conversationMessages.appendChild(doneDiv);
+                                conversationMessages.scrollTop = conversationMessages.scrollHeight;
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error in conversation:', error);
+                alert('Error during conversation. Please try again.');
+                stopConversation();
+            }
+        }
+
+        // Stop conversation
+        function stopConversation() {
+            conversationActive = false;
+            if (conversationReader) {
+                conversationReader.cancel();
+                conversationReader = null;
+            }
+            
+            document.querySelector('.conversation-setup').style.display = 'block';
+            document.getElementById('conversationDisplay').style.display = 'none';
+        }
+
+        // Load agent settings
+        async function loadAgentSettings(agentId) {
+            try {
+                const response = await fetch(`/api/agent/${agentId}/prompt`);
+                const data = await response.json();
+                
+                const agent = agents.find(a => a.id === agentId);
+                
+                const settingsContent = document.getElementById('settingsContent');
+                settingsContent.innerHTML = `
+                    <div class="settings-card">
+                        <h4>Configure ${agent.name}</h4>
+                        
+                        <div class="form-group">
+                            <label>Agent Description</label>
+                            <input 
+                                type="text" 
+                                id="agentDescription" 
+                                value="${escapeHtml(data.description || '')}"
+                                placeholder="Brief description of the agent's role"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>System Prompt</label>
+                            <textarea 
+                                id="systemPrompt" 
+                                placeholder="Enter the system prompt that defines this agent's behavior, personality, and capabilities..."
+                            >${escapeHtml(data.system_prompt || '')}</textarea>
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                This prompt will be sent to the LLM before each conversation to set the agent's context.
+                            </small>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-save" onclick="saveAgentSettings('${agentId}')">
+                                💾 Save Changes
+                            </button>
+                            <button class="btn-reset" onclick="resetAgentSettings('${agentId}')">
+                                🔄 Reset to Default
+                            </button>
+                        </div>
+                        
+                        <div id="settingsMessage" style="margin-top: 20px;"></div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h4>Agent Information</h4>
+                        <div class="info-row">
+                            <div class="info-label">Agent ID</div>
+                            <div class="info-value">${agent.id}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Role</div>
+                            <div class="info-value"><span class="agent-role ${agent.role}">${agent.role.replace('_', ' ')}</span></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Model</div>
+                            <div class="info-value">${agent.model}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Parent Agent</div>
+                            <div class="info-value">${agent.parent_id || 'None (Top Level)'}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading agent settings:', error);
+            }
+        }
+
+        // Save agent settings
+        async function saveAgentSettings(agentId) {
+            const systemPrompt = document.getElementById('systemPrompt').value;
+            const description = document.getElementById('agentDescription').value;
+            const messageDiv = document.getElementById('settingsMessage');
+            
+            try {
+                const response = await fetch(`/api/agent/${agentId}/prompt`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        system_prompt: systemPrompt,
+                        description: description,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.innerHTML = '<div class="success-message">✅ Settings saved successfully!</div>';
+                    
+                    // Update agent in local array
+                    const agent = agents.find(a => a.id === agentId);
+                    if (agent) {
+                        agent.description = description;
+                    }
+                    
+                    // Reload agent list to show updated description
+                    loadAgents();
+                    
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    messageDiv.innerHTML = '<div class="error-message">❌ Failed to save settings</div>';
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                messageDiv.innerHTML = '<div class="error-message">❌ Error saving settings</div>';
+            }
+        }
+
+        // Reset agent settings
+        function resetAgentSettings(agentId) {
+            if (!confirm('Are you sure you want to reset this agent\'s settings to default?')) {
+                return;
+            }
+            
+            document.getElementById('systemPrompt').value = '';
+            document.getElementById('agentDescription').value = '';
+            
+            saveAgentSettings(agentId);
+        }
+    </script>
+</body>
+</html>

@@ -6,9 +6,10 @@
 ## 📚 Table of Contents
 1. [Core Reasoning Patterns](#core-reasoning-patterns)
 2. [Production Frameworks](#production-frameworks)
-3. [Research Papers](#research-papers)
-4. [GitHub Repositories](#github-repositories)
-5. [Learning Path](#learning-path)
+3. [Observability & Monitoring](#observability--monitoring)
+4. [Research Papers](#research-papers)
+5. [GitHub Repositories](#github-repositories)
+6. [Learning Path](#learning-path)
 
 ---
 
@@ -478,7 +479,56 @@ Generate → Self-Critique → Revise → Self-Critique → Final Output
 
 ---
 
-## 🔗 Additional Resources
+## � Observability & Monitoring
+
+### **Langfuse**
+**Links:**
+- [Official Site](https://langfuse.com/)
+- [GitHub](https://github.com/langfuse/langfuse)
+- [Documentation](https://langfuse.com/docs)
+
+**Architecture:** Open-source LLM engineering platform
+
+**Best For:**
+- Production LLM application monitoring
+- Debugging agent workflows
+- Cost tracking and optimization
+- Quality evaluation and testing
+
+**Key Features:**
+- **Tracing:** Track complete agent execution flows with nested spans
+- **Prompt Management:** Version control for prompts with A/B testing
+- **Evaluation:** Score and evaluate LLM outputs
+- **Analytics:** Token usage, cost tracking, and latency metrics
+- **Datasets:** Create test datasets from production traces
+- **Integration:** Works with LangChain, LangGraph, OpenAI, and more
+
+**Pros:**
+- Open-source and self-hostable
+- Comprehensive tracing for complex agent workflows
+- Built-in prompt versioning
+- Cost optimization insights
+- Easy integration with major frameworks
+
+**Cons:**
+- Requires setup for self-hosting
+- Learning curve for advanced features
+
+**Use Cases:**
+- Monitor ReAct/ReWOO agent execution steps
+- Debug multi-agent systems (CrewAI, AutoGen)
+- Track LangGraph state transitions
+- Optimize token usage and costs
+- Evaluate agent output quality
+
+**Resources:**
+- 📄 [Langfuse Documentation](https://langfuse.com/docs)
+- 📄 [LangChain Integration Guide](https://langfuse.com/docs/integrations/langchain)
+- 📄 [Tracing Agent Workflows](https://langfuse.com/docs/tracing)
+
+---
+
+## �🔗 Additional Resources
 
 ### **Comprehensive Guides**
 
