@@ -5,11 +5,12 @@ In folder `Root`, we store sample picture of player potrait. These pictures are 
 **For example:**
 
 - ID = '1' -> We have file `1.png`
-!['1.png'](Root\1.png)
+
+![Sample portrait 1.png](Root/1.png)
 
 or id = '1003050'
 
-!['2.png'](Root\1003050.png)
+![Sample portrait 1003050.png](Root/1003050.png)
 
 
 > Time flies. Now, I want to add my potrait to game so I can update youngster icon in game. But the image in `Root` folder is quite special, it has a transprent border and designer did something so I always feel gradient effect.
