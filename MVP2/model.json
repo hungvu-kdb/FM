@@ -1,0 +1,15 @@
+{
+  "width": 260,
+  "height": 310,
+  "center_x": 130.0,
+  "center_y": 154.5,
+  "half_width": 111.5,
+  "half_height": 138.0,
+  "corner_radius": 5.25,
+  "edge_softness": 1.0,
+  "content_alpha": 255.0,
+  "alpha_floor": 1.0,
+  "halo_gap": 9.0,
+  "halo_sigma": 3.0,
+  "halo_peak": 72.092695
+}

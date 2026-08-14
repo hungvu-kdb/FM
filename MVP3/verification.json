@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-08-13T09:40:09.500Z",
+  "runtime": "v22.20.0",
+  "checks": [
+    {
+      "name": "model is separable rank-k only (no 2-D matrix stored)",
+      "ok": true,
+      "detail": "4568 numbers vs 80600 for a dense matrix (5.7%)"
+    },
+    {
+      "name": "PNG codec round-trips RGBA losslessly",
+      "ok": true,
+      "detail": "37x19 exact"
+    },
+    {
+      "name": "PNG codec round-trips greyscale losslessly",
+      "ok": true,
+      "detail": "8x8 exact"
+    },
+    {
+      "name": "rendered frame reproduces real Root samples",
+      "ok": true,
+      "detail": "1000050.png MAE=0.347 97.1% within ±3; 100013.png MAE=0.285 98.6% within ±3; 1002273.png MAE=0.347 97.1% within ±3"
+    },
+    {
+      "name": "apply output is 260x310 RGBA and decodes cleanly",
+      "ok": true,
+      "detail": "source 253x336 -> 260x310"
+    },
+    {
+      "name": "halo pixels are black and the centre stays opaque",
+      "ok": true,
+      "detail": "corner rgb=(0,0,0) a=0, centre a=255"
+    },
+    {
+      "name": "transformation is idempotent",
+      "ok": true,
+      "detail": "max channel delta on re-apply = 0"
+    },
+    {
+      "name": "source transparency is respected",
+      "ok": true,
+      "detail": "fully transparent input yields fully transparent output"
+    }
+  ],
+  "failed": 0
+}

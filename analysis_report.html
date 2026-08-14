@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FM Portrait Frame — Analysis Report (MVP1 / MVP2 / MVP3)</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #161c23;
+    --panel-2: #1d242d;
+    --line: #2c3540;
+    --text: #dbe3ec;
+    --muted: #96a3b3;
+    --accent: #4fa8ff;
+    --ok: #4ec98a;
+    --warn: #e8b84b;
+    --mono: "Cascadia Code", "Consolas", "SFMono-Regular", monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+  header.page { border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 24px; }
+  h1 { font-size: 1.75rem; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 1.3rem; margin: 34px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 22px 0 8px; color: var(--accent); }
+  p { margin: 10px 0; }
+  .sub { color: var(--muted); margin: 0; }
+  a { color: var(--accent); }
+
+  /* Tabs */
+  .tablist { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
+  .tablist button {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 600;
+    padding: 11px 20px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    margin-bottom: -1px;
+  }
+  .tablist button:hover { color: var(--text); background: var(--panel); }
+  .tablist button[aria-selected="true"] {
+    color: var(--text);
+    background: var(--panel-2);
+    border-color: var(--line);
+    box-shadow: inset 0 3px 0 var(--accent);
+  }
+  .tablist button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  [role="tabpanel"][hidden] { display: none; }
+
+  /* Blocks */
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin: 16px 0; }
+  .card.tight { padding: 14px 18px; }
+  .label { font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .tag.py { color: #ffd764; border-color: #6b5a1e; background: #2a2413; }
+  .tag.js { color: #a6e34e; border-color: #4b6b1e; background: #212a13; }
+  .tag.ok { color: var(--ok); border-color: #29613f; background: #14251b; }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92rem; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+  tbody tr:hover { background: var(--panel); }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-size: .88rem; }
+
+  pre {
+    background: #0b0f14;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: .85rem;
+    line-height: 1.55;
+    margin: 12px 0;
+  }
+  code { font-family: var(--mono); font-size: .88em; background: #0b0f14; border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+  pre code { background: none; border: none; padding: 0; }
+  .math { background: #0b0f14; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 12px 16px; font-family: var(--mono); font-size: .88rem; white-space: pre; overflow-x: auto; margin: 12px 0; }
+
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 5px 0; }
+
+  .grid { display: grid; gap: 14px; }
+  .grid.k3 { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  .grid.k2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .metric { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .metric .v { font-family: var(--mono); font-size: 1.4rem; font-weight: 700; color: var(--accent); display: block; margin-top: 4px; }
+  .metric .n { font-size: .8rem; color: var(--muted); }
+
+  figure { margin: 0; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px; text-align: center; }
+  figure img {
+    max-width: 100%; height: auto; border-radius: 6px;
+    background-color: #fff;
+    background-image:
+      linear-gradient(45deg, #c9c9c9 25%, transparent 25%, transparent 75%, #c9c9c9 75%),
+      linear-gradient(45deg, #c9c9c9 25%, transparent 25%, transparent 75%, #c9c9c9 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+  }
+  figure figcaption { font-size: .82rem; color: var(--muted); margin-top: 8px; }
+
+  .note { border-left: 3px solid var(--warn); background: #241f12; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; }
+  .note strong { color: var(--warn); }
+  .spectrum { display: flex; align-items: flex-end; gap: 6px; height: 130px; margin: 16px 0 4px; }
+  .spectrum div { flex: 1; background: linear-gradient(180deg, var(--accent), #1c5a94); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+  .spectrum div span { position: absolute; bottom: -22px; left: 0; right: 0; text-align: center; font-size: .72rem; color: var(--muted); font-family: var(--mono); }
+  .spectrum-cap { color: var(--muted); font-size: .82rem; margin-top: 26px; }
+  footer.page { margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="page">
+  <h1>Football Manager Portrait Frame — Analysis Report</h1>
+  <p class="sub">Three independent formalizations of the same 260&times;310 transparent-border effect, fitted from the 46 samples in <code>Root/</code>. Generated 13 August 2026.</p>
+</header>
+
+<div class="tablist" role="tablist" aria-label="Analysis sections">
+  <button role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
+  <button role="tab" id="tab-mvp1" aria-controls="panel-mvp1" aria-selected="false" tabindex="-1">MVP1 &middot; Dense template</button>
+  <button role="tab" id="tab-mvp2" aria-controls="panel-mvp2" aria-selected="false" tabindex="-1">MVP2 &middot; Procedural SDF</button>
+  <button role="tab" id="tab-mvp3" aria-controls="panel-mvp3" aria-selected="false" tabindex="-1">MVP3 &middot; Separable low-rank</button>
+</div>
+
+<!-- ============================== OVERVIEW ============================== -->
+<section role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" tabindex="0">
+
+  <h2>What was actually found</h2>
+  <p>The "transparent border with a gradient" is not a per-image effect and not a blur of the portrait. It is a <strong>fixed alpha channel</strong> shared by every sample. The RGB data changes from player to player; the alpha channel essentially does not.</p>
+
+  <div class="grid k3">
+    <div class="metric"><span class="n">Samples analysed</span><span class="v">46</span><span class="n">all 260&times;310</span></div>
+    <div class="metric"><span class="n">Mean per-pixel alpha std</span><span class="v">0.40</span><span class="n">across all 46 images</span></div>
+    <div class="metric"><span class="n">Max per-pixel alpha std</span><span class="v">25.70</span><span class="n">localised on the content edge</span></div>
+  </div>
+
+  <p>A standard deviation near zero at almost every pixel is the whole finding. It means one shared alpha field explains the data, and all three MVPs are therefore competing <em>compressions of the same field</em>, not competing theories about it.</p>
+
+  <h3>Structure of that field</h3>
+  <p>Scanning any line through the shared alpha reveals three concentric zones:</p>
+  <ol>
+    <li><strong>Outer glow</strong> — a smooth alpha ramp from 0 up to about 98–100 over roughly 9&nbsp;px, following the rounded outline. Its colour is pure black <code>(0,0,0)</code> in every single sample, so it is a drop shadow, not portrait content.</li>
+    <li><strong>Transparent gap</strong> — a band of alpha ≈ 0 that detaches the glow from the picture. This gap is what makes the glow read as a soft halo rather than a border.</li>
+    <li><strong>Content region</strong> — a hard-edged rounded rectangle at alpha 255, bounding box <code>x&nbsp;∈&nbsp;[19,241]</code>, <code>y&nbsp;∈&nbsp;[18,292]</code>, about 75.7&nbsp;% of the frame.</li>
+  </ol>
+
+  <h3>How it was found</h3>
+  <p>The same measurement pipeline underpins all three:</p>
+  <ol>
+    <li>Decode all 46 PNGs to straight (non-premultiplied) RGBA. The set is mixed: 31 files are palette-based with a <code>tRNS</code> transparency table, 15 are true RGBA. Palette indices must be expanded through the palette before the alpha means anything.</li>
+    <li>Stack the alpha channels into an <code>N&times;H&times;W</code> array and compute per-pixel mean and standard deviation. The near-zero std is what licenses a shared model.</li>
+    <li>Isolate the glow by masking pixels with <code>0&nbsp;&lt;&nbsp;alpha&nbsp;&lt;&nbsp;255</code> and averaging their RGB. Result ≈ <code>(0.4, 0.4, 0.4)</code>, i.e. black.</li>
+    <li>Fit a candidate representation to the mean field, then score it back against the 46 <em>real</em> alphas — not against the mean — so a model cannot score well by simply memorising its own fitting target.</li>
+  </ol>
+
+  <h3>On formalization</h3>
+  <p>Every model shares the same compositing skeleton. Given a frame <code>F</code> and an input portrait <code>P</code>:</p>
+  <div class="math">RGB_out(y,x) = RGB_P(y,x)   where F is content
+             = (0,0,0)      elsewhere        (the glow is black)
+A_out(y,x)   = F(y,x)  ⊗  source transparency</div>
+  <p>What differs between the MVPs is entirely <strong>how <code>F</code> is stored and reconstructed</strong>: as a literal matrix, as a geometric formula, or as a product of one-dimensional profiles. That choice drives file size, editability, and how gracefully the model generalises to other canvas sizes.</p>
+
+  <h2>The three solutions side by side</h2>
+  <table>
+    <thead><tr><th>Aspect</th><th>MVP1</th><th>MVP2</th><th>MVP3</th></tr></thead>
+    <tbody>
+      <tr><td>Representation</td><td>Dense per-pixel alpha matrix</td><td>Signed distance field + Gaussian halo</td><td>Rank-8 separable factorization</td></tr>
+      <tr><td>Language</td><td><span class="tag py">Python</span></td><td><span class="tag py">Python</span></td><td><span class="tag js">Node.js</span></td></tr>
+      <tr><td>Dependencies</td><td>NumPy, Pillow</td><td>NumPy, Pillow</td><td>none at all</td></tr>
+      <tr><td>Stored numbers</td><td class="num">80,600</td><td class="num">13</td><td class="num">4,568</td></tr>
+      <tr><td>Model file size</td><td class="num">80,728 B</td><td class="num">303 B</td><td class="num">98,719 B</td></tr>
+      <tr><td>Median per-sample MAE</td><td class="num">0.3326</td><td class="num">1.4370</td><td class="num">0.3470</td></tr>
+      <tr><td>Resolution independent</td><td>no</td><td>yes</td><td>no (profiles are resamplable)</td></tr>
+      <tr><td>Human-editable</td><td>no</td><td>yes — 13 named scalars</td><td>partly</td></tr>
+      <tr><td>Idempotent</td><td>yes</td><td>yes</td><td>yes, exactly (delta 0)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <p><strong>Reading the accuracy column.</strong> All three were scored identically: render the frame, then compare against the alpha channel of each of the 46 real samples. MVP1 wins on raw error because it stores the answer — it is a lookup table, so its only error is per-image antialiasing. MVP2 is 4&times; worse yet is arguably the most useful model: 13 scalars that a designer can hand-tune, and it renders at any resolution. MVP3 lands within noise of MVP1 while storing 5.7&nbsp;% of the parameters a dense matrix needs. Pick by what you need to <em>do</em>, not by MAE.</p>
+  </div>
+
+  <h3>Visual result on the same input</h3>
+  <div class="grid k2">
+    <figure><img src="Test/alavez.png" alt="Original input portrait, 253 by 336 pixels, before any frame is applied"><figcaption>Input — <code>Test/alavez.png</code>, 253&times;336</figcaption></figure>
+    <figure><img src="TestOutputs/MVP1/alavez.png" alt="Portrait after the MVP1 dense template frame is applied"><figcaption>MVP1 — dense template</figcaption></figure>
+    <figure><img src="TestOutputs/MVP2/alavez.png" alt="Portrait after the MVP2 procedural signed distance field frame is applied"><figcaption>MVP2 — procedural SDF</figcaption></figure>
+    <figure><img src="TestOutputs/MVP3/alavez.png" alt="Portrait after the MVP3 separable low-rank frame is applied"><figcaption>MVP3 — separable low-rank</figcaption></figure>
+  </div>
+  <p class="sub">Images sit on a checkerboard so the transparent border and black halo are visible. All three outputs are 260&times;310 RGBA.</p>
+
+  <h2>Which one should you use?</h2>
+  <ul>
+    <li><strong>You just want your face in the game.</strong> MVP1. It reproduces the original frame most faithfully and takes one command.</li>
+    <li><strong>You want to tweak the look</strong> — thicker halo, rounder corners, different gap. MVP2. Edit a number in <code>model.json</code> and re-render.</li>
+    <li><strong>You want a different canvas size or a portable model.</strong> MVP2 for pure scalability; MVP3 if you want measured fidelity with no runtime dependencies at all.</li>
+  </ul>
+</section>
+
+<!-- ================================ MVP1 ================================ -->
+<section role="tabpanel" id="panel-mvp1" aria-labelledby="tab-mvp1" tabindex="0" hidden>
+
+  <p><span class="tag py">Python 3</span> <span class="tag">NumPy + Pillow</span> <span class="tag ok">validated</span></p>
+
+  <h2>What I found</h2>
+  <p>MVP1 was the first pass, and it is where the central discovery was made: <strong>the alpha channel is a constant across the dataset.</strong> Stacking all 46 alpha channels and taking the per-pixel standard deviation gives:</p>
+  <div class="grid k3">
+    <div class="metric"><span class="n">Mean std</span><span class="v">0.40</span></div>
+    <div class="metric"><span class="n">P[std &lt; 5]</span><span class="v">98.5&nbsp;%</span></div>
+    <div class="metric"><span class="n">P[std &lt; 1]</span><span class="v">87.7&nbsp;%</span></div>
+  </div>
+  <p>With variance that low, the alpha is not a function of the portrait. It is a fixed template that the designer applied identically to every player. The "gradient effect" the user perceives is the soft black halo in that template.</p>
+
+  <p>Measured geometry:</p>
+  <ul>
+    <li>Content bounding box <code>x&nbsp;∈&nbsp;[19,241]</code>, <code>y&nbsp;∈&nbsp;[18,292]</code> — 60,998&nbsp;px, 75.7&nbsp;% of the frame.</li>
+    <li>Glow region — 9,601&nbsp;px, 11.9&nbsp;% of the frame.</li>
+    <li>Glow mean RGB ≈ <code>(0.4, 0.4, 0.4)</code>, i.e. pure black at fractional alpha.</li>
+  </ul>
+
+  <h2>How I found it</h2>
+  <ol>
+    <li>Loaded all 46 samples with Pillow, converting to RGBA so palette files and true-RGBA files became comparable.</li>
+    <li>Built an <code>N&times;310&times;260</code> NumPy array of alpha and reduced it with <code>mean(axis=0)</code> and <code>std(axis=0)</code>. Saved both as greyscale previews — <code>mean_alpha.png</code> and <code>std_alpha.png</code> — because looking at the std image immediately shows the only disagreement is a one-pixel ring on the content edge.</li>
+    <li>Took horizontal and vertical scanlines through the mean to read off the three zones numerically.</li>
+    <li>Masked the partially transparent pixels and averaged their RGB to confirm the glow colour.</li>
+    <li>Snapped the mean to clean values and froze it as <code>template_alpha.npy</code>.</li>
+  </ol>
+
+  <h2>Formalization</h2>
+  <p>The template is the model. No parameters are inferred; the matrix <em>is</em> the parameter set.</p>
+  <div class="math">T ≈ M   (per-pixel mean alpha, snapped),   T ∈ {0..255}^{310×260}
+Ω(y,x) = 1  ⇔  T(y,x) = 255          (binary content mask)</div>
+  <p>Applying the frame is then a single Hadamard product plus a channel swap:</p>
+  <div class="math">O_RGB(y,x) = P(y,x) · Ω(y,x)
+O_A(y,x)   = T(y,x)
+
+compactly:   O = [ P ⊙ Ω ‖ T ]</div>
+  <p>Because <code>Ω ⊙ Ω = Ω</code> and the alpha is overwritten rather than multiplied, the operator is idempotent: framing an already-framed image changes nothing.</p>
+
+  <h3>The <code>--fit</code> variant</h3>
+  <p>Pixel-aligned mode clips whatever falls outside the rounded corners. <code>--fit</code> avoids that by scaling the portrait to <em>cover</em> the content box <code>B = [19,241]&times;[18,292]</code> (222&times;274) and centre-cropping first:</p>
+  <div class="math">P' = CenterCrop_B( Resize_cover( P, B ) )
+O  = [ P' ⊙ Ω ‖ T ]</div>
+
+  <h2>My solution</h2>
+  <pre><code>python MVP1\build_template.py                      # fit and freeze template_alpha.npy
+python MVP1\apply_border.py INPUT OUTPUT          # pixel-aligned
+python MVP1\apply_border.py INPUT OUTPUT --fit    # scale-to-cover + centre-crop</code></pre>
+  <p>Roughly 20 lines of real work: load the <code>.npy</code>, derive <code>content_mask = template == 255</code>, resize the input to 260&times;310 if needed, zero the RGB outside the mask, then <code>np.dstack([rgb, template])</code> and save as RGBA.</p>
+
+  <h3>Validation</h3>
+  <table>
+    <thead><tr><th>Check</th><th class="num">Result</th></tr></thead>
+    <tbody>
+      <tr><td>Output alpha vs real sample <code>1000050</code></td><td class="num">MAE 0.31 &middot; 97.8 % within ±3</td></tr>
+      <tr><td>Re-applied on <code>100013</code></td><td class="num">MAE 0.22 &middot; 98.7 % within ±3</td></tr>
+      <tr><td>Per-sample MAE across all 46</td><td class="num">min 0.1608 &middot; median 0.3326 &middot; max 0.8366</td></tr>
+      <tr><td><code>test_apply.py</code> assertions</td><td class="num">all pass</td></tr>
+    </tbody>
+  </table>
+  <p>The residual is per-image antialiasing on the content edge. For a lookup-table model that is the floor.</p>
+
+  <h3>Trade-offs</h3>
+  <ul>
+    <li><strong>Most accurate.</strong> It stores the ground truth, so nothing can beat it on the geometry it was fitted to.</li>
+    <li><strong>Locked to 260&times;310.</strong> The model has no notion of shape, so it cannot be re-rendered at another size — only resampled.</li>
+    <li><strong>Not editable.</strong> Want a thicker halo? There is no parameter to change; you would have to edit 80,600 numbers.</li>
+    <li><strong>Bulky.</strong> 80,728 bytes of binary NumPy that a human cannot read or diff.</li>
+  </ul>
+
+  <h2>Libraries — and alternatives</h2>
+  <h3>What I used</h3>
+  <ul>
+    <li><a href="https://numpy.org/">NumPy</a> — the array stacking, <code>mean</code>/<code>std</code> reductions, boolean masking, and <code>dstack</code>. This model is essentially four NumPy calls.</li>
+    <li><a href="https://python-pillow.org/">Pillow</a> — PNG decode/encode, <code>convert("RGBA")</code> to normalise palette images, and LANCZOS resampling.</li>
+  </ul>
+  <h3>If you want to do the same thing differently</h3>
+  <ul>
+    <li><a href="https://scikit-image.org/">scikit-image</a> — <code>io.imread</code> plus richer measurement helpers (<code>regionprops</code>, <code>find_contours</code>) if you want the content region extracted analytically rather than by thresholding.</li>
+    <li><a href="https://opencv.org/">OpenCV</a> (<code>opencv-python</code>) — fastest option at scale and has <code>cv2.merge</code> / <code>cv2.split</code> for channel work. Watch the BGR channel order and note that <code>IMREAD_UNCHANGED</code> is required to keep alpha at all.</li>
+    <li><a href="https://imageio.readthedocs.io/">imageio</a> — a thinner I/O layer than Pillow if all you want is "give me an array".</li>
+    <li><a href="https://imagemagick.org/">ImageMagick</a> — no code needed for the apply step: <code>magick input.png template.png -alpha off -compose CopyOpacity -composite out.png</code> does the same compositing from a shell.</li>
+    <li><a href="https://sharp.pixelplumbing.com/">sharp</a> (Node) or <a href="https://github.com/image-rs/image">image-rs</a> (Rust) — if you want this as a build step in a non-Python toolchain.</li>
+  </ul>
+</section>
+
+<!-- ================================ MVP2 ================================ -->
+<section role="tabpanel" id="panel-mvp2" aria-labelledby="tab-mvp2" tabindex="0" hidden>
+
+  <p><span class="tag py">Python 3</span> <span class="tag">NumPy + Pillow</span> <span class="tag ok">validated</span></p>
+
+  <h2>What I found</h2>
+  <p>MVP2 asked a deliberately different question. MVP1 established <em>that</em> the alpha field is fixed; MVP2 asked <strong>what shape it is</strong> — can the field be regenerated from a geometric description instead of stored?</p>
+  <p>It can. The field turns out to be describable by <strong>13 scalars</strong>, no matrix at all:</p>
+  <table>
+    <thead><tr><th>Parameter</th><th class="num">Value</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>center_x</code>, <code>center_y</code></td><td class="num">130.0, 154.5</td><td>centre of the rounded rectangle</td></tr>
+      <tr><td><code>half_width</code>, <code>half_height</code></td><td class="num">111.5, 138.0</td><td>half-extents of the content box</td></tr>
+      <tr><td><code>corner_radius</code></td><td class="num">5.25</td><td>corner rounding</td></tr>
+      <tr><td><code>edge_softness</code></td><td class="num">1.0</td><td>antialiasing width of the content edge</td></tr>
+      <tr><td><code>halo_gap</code></td><td class="num">9.0</td><td>transparent gap before the glow starts</td></tr>
+      <tr><td><code>halo_sigma</code></td><td class="num">3.0</td><td>Gaussian falloff of the glow</td></tr>
+      <tr><td><code>halo_peak</code></td><td class="num">72.09</td><td>maximum glow alpha</td></tr>
+      <tr><td><code>content_alpha</code>, <code>alpha_floor</code></td><td class="num">255.0, 1.0</td><td>opaque level, ambient floor</td></tr>
+      <tr><td><code>width</code>, <code>height</code></td><td class="num">260, 310</td><td>canvas size</td></tr>
+    </tbody>
+  </table>
+  <p>The interesting measured result is <code>halo_gap = 9.0</code> with <code>halo_sigma = 3.0</code>. The glow is <em>detached</em> — it does not touch the picture. That gap is precisely why the effect reads as an ambient gradient rather than a stroke.</p>
+
+  <h2>How I found it</h2>
+  <p>This is inverse graphics: propose a parametric generator, then solve for the parameters that best reproduce the observation.</p>
+  <ol>
+    <li>Model the content region as a <strong>rounded-rectangle signed distance field</strong> (SDF) — negative inside, zero on the boundary, positive outside.</li>
+    <li>Model the content edge as analytical coverage of that boundary, so antialiasing falls out of the maths instead of being sampled.</li>
+    <li>Model the glow as a Gaussian in <em>distance</em>, gated to fire only outside the boundary and only beyond <code>halo_gap</code>.</li>
+    <li>Fit all parameters <strong>per image</strong>, then aggregate with the <strong>median</strong> rather than the mean. That was a deliberate choice: the median is robust to the handful of samples with unusual edge antialiasing, which would otherwise drag a mean fit off the true geometry.</li>
+    <li>Score the single aggregated model back against all 46 real alphas.</li>
+  </ol>
+
+  <h2>Formalization</h2>
+  <p>Signed distance to a rounded rectangle, evaluated at pixel centres:</p>
+  <div class="math">q_x = |x − c_x| − (h_w − r)
+q_y = |y − c_y| − (h_h − r)
+
+sdf(y,x) = ‖ (max(q_x,0), max(q_y,0)) ‖₂  +  min( max(q_x,q_y), 0 )  −  r</div>
+  <p>Content coverage — the analytical antialiased edge:</p>
+  <div class="math">coverage(y,x) = clamp( 0.5 − sdf(y,x) / edge_softness , 0, 1 )
+content(y,x)  = content_alpha · coverage(y,x) · A_src(y,x)/255</div>
+  <p>The detached exterior-only Gaussian halo, which fires only where <code>sdf ≥ halo_gap</code>:</p>
+  <div class="math">z(y,x)    = ( sdf(y,x) − halo_gap ) / halo_sigma
+halo(y,x) = alpha_floor + (halo_peak − alpha_floor) · exp( −z² / 2 )</div>
+  <p>And the two layers combine by taking whichever is more opaque:</p>
+  <div class="math">A_out(y,x) = clamp( max( content(y,x), halo(y,x) ) , 0, 255 )</div>
+  <p>Note that nothing here depends on 260 or 310 except the sampling loop. Change the canvas and the same formula renders a correctly proportioned frame.</p>
+
+  <h2>My solution</h2>
+  <pre><code>python MVP2\analyze.py                                    # fit the 13 scalars -> model.json
+python MVP2\apply_frame.py INPUT OUTPUT                   # requires exactly 260x310
+python MVP2\apply_frame.py INPUT OUTPUT --resize          # resample off-size input first</code></pre>
+  <p>The renderer is shared between analysis and application (<code>procedural_model.py</code>), so the model that was fitted is provably the model that ships. <code>model.json</code> is 303 bytes and is validated on load: every one of the 13 keys must be present and must be a scalar, never a list or dict. That guard is what enforces "no template snuck back in".</p>
+
+  <h3>Validation</h3>
+  <div class="grid k3">
+    <div class="metric"><span class="n">Global alpha MAE</span><span class="v">1.4331</span><span class="n">all 46 samples</span></div>
+    <div class="metric"><span class="n">Median per-sample MAE</span><span class="v">1.4370</span><span class="n">min 1.3502 / max 1.8105</span></div>
+    <div class="metric"><span class="n">Error p50 / p90</span><span class="v">0.0 / 2.80</span><span class="n">p95 6.76 &middot; p99 25.89</span></div>
+  </div>
+  <p>Half of all pixels are reproduced <em>exactly</em> (p50 = 0). The error is concentrated in the p99 tail, which is the one-pixel content edge and the outer tail of the glow — exactly where a smooth analytical function cannot match hand-authored pixels. Also asserted: source-alpha accounting, RGB retention inside the content region, black halo RGB, and CWD-independent path handling.</p>
+
+  <div class="note">
+    <p><strong>Honest comparison.</strong> MVP2 is about 4&times; less accurate than MVP1 on paper. That is the price of describing the frame instead of copying it, and for most uses it is worth paying: 303 bytes, any resolution, and every parameter has a name a designer can reason about.</p>
+  </div>
+
+  <h3>Trade-offs</h3>
+  <ul>
+    <li><strong>Tiny and legible.</strong> 13 named numbers versus 80,600 anonymous ones.</li>
+    <li><strong>Resolution independent.</strong> The only genuinely scalable model of the three.</li>
+    <li><strong>Editable by hand.</strong> Bump <code>halo_sigma</code> for a softer glow; raise <code>corner_radius</code> for rounder corners.</li>
+    <li><strong>Least accurate.</strong> Assumes the designer's frame really is a rounded rectangle with a Gaussian shadow. It is close, but not exact.</li>
+  </ul>
+
+  <h2>Libraries — and alternatives</h2>
+  <h3>What I used</h3>
+  <ul>
+    <li><a href="https://numpy.org/">NumPy</a> — <code>mgrid</code> to build the coordinate lattice, then vectorised <code>hypot</code>, <code>maximum</code>, <code>clip</code>, and <code>exp</code> to evaluate the SDF over all 80,600 pixels without a Python loop. This is the whole renderer.</li>
+    <li><a href="https://python-pillow.org/">Pillow</a> — I/O only.</li>
+    <li>Aggregation used plain <code>statistics.median</code> semantics rather than a fitting framework, because each parameter is recoverable in closed form from the measured field.</li>
+  </ul>
+  <h3>If you want to do the same thing differently</h3>
+  <ul>
+    <li><a href="https://docs.scipy.org/doc/scipy/reference/optimize.html">SciPy</a> — <code>optimize.least_squares</code> or <code>curve_fit</code> to fit all 13 parameters jointly by minimising residual against the real alpha, instead of recovering them one at a time. This is the natural upgrade path and would likely close some of the gap to MVP1.</li>
+    <li><a href="https://cairographics.org/pycairo/">Pycairo</a> or <a href="https://skia.org/">Skia</a> (<code>skia-python</code>) — production-grade vector renderers with native rounded rectangles and real Gaussian blur. Let the library rasterise the shape rather than hand-rolling the SDF.</li>
+    <li><a href="https://python-pillow.org/">Pillow</a> alone — <code>ImageDraw.rounded_rectangle</code> plus <code>ImageFilter.GaussianBlur</code> gets you a visually similar frame in about ten lines, if you do not need an explicit parameter set.</li>
+    <li><strong>SDFs in a shader</strong> — this maths is standard signed-distance-field work from the demoscene/GLSL world. <a href="https://iquilezles.org/articles/distfunctions2d/">Inigo Quilez's 2-D distance function reference</a> is the canonical source for the rounded-box formula above, and the same code runs in WebGL, Shadertoy, or a Unity shader.</li>
+    <li><strong>CSS</strong> — <code>border-radius</code> plus <code>box-shadow</code> expresses this exact effect natively in a browser, if the target is web rather than a PNG.</li>
+  </ul>
+</section>
+
+<!-- ================================ MVP3 ================================ -->
+<section role="tabpanel" id="panel-mvp3" aria-labelledby="tab-mvp3" tabindex="0" hidden>
+
+  <p><span class="tag js">Node.js 22 (ESM)</span> <span class="tag">zero dependencies</span> <span class="tag ok">8/8 checks passed</span></p>
+
+  <h2>What I found</h2>
+  <p>MVP3 had two constraints: <strong>no Python</strong>, and no reuse of either earlier idea. So it asks a third question — not "what is the field" and not "what shape is it", but <strong>what is its algebraic rank?</strong></p>
+  <p>The answer is startling. The singular values of the mean alpha field collapse after the first term:</p>
+
+  <div class="spectrum" role="img" aria-label="Bar chart of singular value weights by rank: 63394, 1147, 674, 495, 344, 193, 132, 120. The first term dwarfs all others.">
+    <div style="height:100%"><span>63394</span></div>
+    <div style="height:22%"><span>1147</span></div>
+    <div style="height:17%"><span>674</span></div>
+    <div style="height:15%"><span>495</span></div>
+    <div style="height:13%"><span>344</span></div>
+    <div style="height:10%"><span>193</span></div>
+    <div style="height:8%"><span>132</span></div>
+    <div style="height:7%"><span>120</span></div>
+  </div>
+  <p class="spectrum-cap">Singular value per rank-1 term (bar heights are log-ish scaled for legibility; the first term is ~55&times; the second).</p>
+
+  <p>The leading term carries roughly 98&nbsp;% of the spectral energy. In plain terms: <strong>the frame is almost exactly a product of one vertical profile and one horizontal profile</strong>, <code>alpha(y,x) ≈ f(y)·g(x)</code>. That is a real structural fact about the artwork that neither earlier model exposed — and it makes sense in hindsight, because a rectangle with a symmetric shadow is inherently separable. Terms 2–8 exist only to correct the rounded corners and glow falloff, where rows and columns are not quite independent.</p>
+
+  <div class="grid k3">
+    <div class="metric"><span class="n">Stored numbers</span><span class="v">4,568</span><span class="n">vs 80,600 dense — 5.7 %</span></div>
+    <div class="metric"><span class="n">Median per-sample MAE</span><span class="v">0.3470</span><span class="n">MVP1 dense scores 0.3326</span></div>
+    <div class="metric"><span class="n">Idempotency delta</span><span class="v">0</span><span class="n">exact, not approximate</span></div>
+  </div>
+
+  <h2>How I found it</h2>
+  <p>Working without Python meant building the stack from the ground up.</p>
+  <ol>
+    <li><strong>Probed the runtime.</strong> Node.js and .NET are installed; Go, Rust, and ImageMagick are not. Node won because its standard library ships <code>zlib</code> — the one thing you genuinely cannot hand-roll cheaply for PNG.</li>
+    <li><strong>Surveyed the input format before decoding it.</strong> Read the IHDR of all 46 files: 31 are 8-bit palette with <code>tRNS</code> (29 of them also carry an <code>iTXt</code> chunk), 15 are 8-bit RGBA, none interlaced. That told me exactly which decoder paths were required and which could fail loudly instead of guessing.</li>
+    <li><strong>Wrote a PNG codec</strong> (<code>png.mjs</code>) — signature check, chunk walk for <code>IHDR</code>/<code>PLTE</code>/<code>tRNS</code>/<code>IDAT</code>, <code>inflateSync</code>, then reversal of all five scanline filters including Paeth. Palette indices are expanded through <code>PLTE</code>/<code>tRNS</code> so everything downstream sees uniform straight RGBA.</li>
+    <li><strong>Measured cross-image agreement</strong> independently, arriving at the same mean std of 0.4022 — a useful cross-check that the new decoder agrees with Pillow.</li>
+    <li><strong>Fitted the factorization</strong> by alternating power iteration with deflation, then scored it against the 46 real alphas.</li>
+  </ol>
+
+  <h2>Formalization</h2>
+  <p>Treat the mean alpha field as a matrix and approximate it by a sum of outer products of 1-D profiles:</p>
+  <div class="math">Â = Σ_{k=1..K} s_k · u_k ⊗ v_k          u_k ∈ ℝ^H,  v_k ∈ ℝ^W,  ‖u_k‖₂ = ‖v_k‖₂ = 1
+
+Â(y,x) = clamp( Σ_{k=1..K} s_k · u_k(y) · v_k(x) , 0, 255 )</div>
+  <p>This is a truncated SVD written in separable form. Parameter count:</p>
+  <div class="math">K · (H + W + 1)  =  8 · (310 + 260 + 1)  =  4 568
+dense matrix     =  310 · 260            =  80 600      →  5.7 %</div>
+
+  <h3>Fitting without a linear-algebra library</h3>
+  <p>Each rank-1 term is found by the fixed point that an SVD converges to. Starting from a uniform <code>v</code>, 120 sweeps of:</p>
+  <div class="math">u ← R v   ;  u ← u / ‖u‖₂
+v ← Rᵀ u  ;  v ← v / ‖v‖₂
+s ← uᵀ R v</div>
+  <p>Then the term is <em>deflated</em> out so the next one fits the residual:</p>
+  <div class="math">R⁽⁰⁾ = M
+R⁽ᵏ⁾ = R⁽ᵏ⁻¹⁾ − s_k · u_k ⊗ v_k</div>
+  <p>No BLAS, no LAPACK, no matrix library — just two nested loops and a normalisation.</p>
+
+  <h3>Choosing K = 8</h3>
+  <table>
+    <thead><tr><th class="num">K</th><th class="num">weight s_K</th><th class="num">MAE vs mean field</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="num">63,393.9</td><td class="num">0.6237</td></tr>
+      <tr><td class="num">2</td><td class="num">1,147.4</td><td class="num">0.3549</td></tr>
+      <tr><td class="num">3</td><td class="num">674.4</td><td class="num">0.2789</td></tr>
+      <tr><td class="num">4</td><td class="num">495.0</td><td class="num">0.1607</td></tr>
+      <tr><td class="num">5</td><td class="num">344.1</td><td class="num">0.1224</td></tr>
+      <tr><td class="num">6</td><td class="num">192.6</td><td class="num">0.0982</td></tr>
+      <tr><td class="num">7</td><td class="num">131.5</td><td class="num">0.0803</td></tr>
+      <tr><td class="num">8</td><td class="num">120.4</td><td class="num">0.0667</td></tr>
+    </tbody>
+  </table>
+  <p>I tested rank 12 as well. It fits the mean field better (MAE 0.0529 vs 0.0667) but agreement with <em>real samples</em> does not improve — median per-sample MAE 0.3481 vs 0.3470. The extra terms are absorbing per-image antialiasing noise, not signal. Rank 8 ships.</p>
+
+  <h3>Compositing, and the bug that shaped it</h3>
+  <p>The first version multiplied source alpha by frame alpha directly. The idempotency check caught it immediately: re-applying the frame darkened the glow by up to 64 levels, because the glow gradient was being multiplied twice. The fix normalises away any frame the input already carries before re-applying:</p>
+  <div class="math">A_content(y,x) = clamp( 255 · A_src(y,x) / Â(y,x) , 0, 255 )        (Â > 0)
+A_out(y,x)     = Â(y,x) · A_content(y,x) / 255
+
+RGB_out(y,x)   = RGB_src(y,x)  if Â(y,x) ≥ 128     (content)
+               = (0,0,0)       otherwise           (black glow)</div>
+  <p>Max channel delta on re-apply is now <strong>0</strong> — exactly idempotent, not approximately. A fully opaque input yields <code>A_out = Â</code>; a fully transparent one stays transparent; a soft cut-out keeps its own gradient.</p>
+
+  <h2>My solution</h2>
+  <pre><code>node MVP3\analyze.mjs --rank 8                              # fit -> model.json
+node MVP3\apply-frame.mjs INPUT OUTPUT                      # bilinear resize if off-size
+node MVP3\apply-frame.mjs INPUT OUTPUT --fit                # scale-to-cover + centre-crop
+node MVP3\apply-frame.mjs INPUT OUTPUT --no-resize          # reject off-size instead
+node MVP3\verify.mjs                                        # 8/8 assertions</code></pre>
+  <table>
+    <thead><tr><th>File</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td><code>png.mjs</code></td><td>PNG decode/encode on <code>node:zlib</code> alone</td></tr>
+      <tr><td><code>separable.mjs</code></td><td>rank-1 extraction, deflation, frame rendering</td></tr>
+      <tr><td><code>analyze.mjs</code></td><td>Step 1 — fit the model from <code>Root/</code></td></tr>
+      <tr><td><code>apply-frame.mjs</code></td><td>Step 2 — apply the frame, incl. bilinear resample and cover-crop</td></tr>
+      <tr><td><code>verify.mjs</code></td><td>assertion suite, writes <code>verification.json</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Validation — 8/8</h3>
+  <table>
+    <thead><tr><th>Check</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Model holds separable terms only, no 2-D matrix</td><td>4,568 vs 80,600 numbers (5.7 %)</td></tr>
+      <tr><td>RGBA PNG round-trip</td><td>byte-exact at 37&times;19</td></tr>
+      <tr><td>Greyscale PNG round-trip</td><td>byte-exact at 8&times;8</td></tr>
+      <tr><td>Frame vs real samples</td><td><code>1000050</code> 0.347 / 97.1 % ±3 &middot; <code>100013</code> 0.285 / 98.6 % ±3</td></tr>
+      <tr><td>Apply output on the 253&times;336 test portrait</td><td>clean 260&times;310 RGBA</td></tr>
+      <tr><td>Glow colour and centre opacity</td><td>corner <code>(0,0,0)</code> &middot; centre alpha 255</td></tr>
+      <tr><td>Idempotency</td><td>max channel delta 0</td></tr>
+      <tr><td>Source transparency respected</td><td>transparent in &rarr; transparent out</td></tr>
+    </tbody>
+  </table>
+  <p>Against the mean field: MAE 0.0667, p50 0.0017, p90 0.0699, p99 1.8707, max 13.80.</p>
+
+  <h3>Trade-offs</h3>
+  <ul>
+    <li><strong>Effectively matches MVP1's accuracy</strong> — median per-sample MAE 0.3470 against the dense template's 0.3326, a gap of 0.014 alpha levels — at 5.7&nbsp;% of the parameters.</li>
+    <li><strong>Runs anywhere Node runs.</strong> No install step, no native builds, no version conflicts.</li>
+    <li><strong>Reveals structure.</strong> The near-rank-1 finding is genuine insight the other two models cannot express.</li>
+    <li><strong>Largest file on disk</strong> (98,719 B) despite the fewest meaningful parameters — JSON text of 4,568 nine-decimal floats is verbose. A binary <code>Float32Array</code> dump would be ~18 KB.</li>
+    <li><strong>Profiles are tied to this canvas.</strong> They can be resampled to another size, unlike MVP1's matrix, but that is interpolation rather than true resolution independence.</li>
+    <li><strong>Hand-rolled codec.</strong> Correct for the inputs surveyed here; it deliberately rejects interlaced and 16-bit PNGs rather than mishandling them.</li>
+  </ul>
+
+  <h2>Libraries — and alternatives</h2>
+  <h3>What I used</h3>
+  <ul>
+    <li><a href="https://nodejs.org/api/zlib.html"><code>node:zlib</code></a> — <code>inflateSync</code> / <code>deflateSync</code>. The DEFLATE stream inside <code>IDAT</code> is the only part of PNG worth delegating.</li>
+    <li><a href="https://nodejs.org/api/assert.html"><code>node:assert/strict</code></a> — the validation suite, no test framework needed.</li>
+    <li><code>node:fs</code>, <code>node:path</code>. That is the complete dependency list.</li>
+  </ul>
+  <h3>If you want to do the same thing differently</h3>
+  <p><strong>For image I/O in Node</strong> — you almost certainly should not hand-write a PNG codec in production:</p>
+  <ul>
+    <li><a href="https://sharp.pixelplumbing.com/">sharp</a> — libvips-backed, by far the fastest; <code>raw()</code> gives you the pixel buffer and <code>ensureAlpha()</code> normalises channels. The standard choice.</li>
+    <li><a href="https://github.com/lukeapage/pngjs">pngjs</a> — pure-JS PNG, closest to what <code>png.mjs</code> does, but handles interlacing and 16-bit too.</li>
+    <li><a href="https://github.com/Automattic/node-canvas">node-canvas</a> — full HTML5 Canvas API server-side, so <code>getImageData</code> / <code>putImageData</code> work exactly as in a browser.</li>
+    <li><a href="https://github.com/jimp-dev/jimp">Jimp</a> — zero-native-dependency alternative if compiling <code>sharp</code> is a problem.</li>
+    <li><strong>Browser</strong> — <code>OffscreenCanvas</code> + <code>ImageData</code> needs no library at all.</li>
+  </ul>
+  <p><strong>For the linear algebra</strong> — power iteration was written by hand only because I wanted zero dependencies:</p>
+  <ul>
+    <li><a href="https://mathjs.org/">math.js</a> — general-purpose, has matrix types and eigenvalue support.</li>
+    <li><a href="https://github.com/mljs/matrix">ml-matrix</a> — the direct fit: it ships a real <code>SingularValueDecomposition</code> class, so the whole of <code>separable.mjs</code> becomes a few lines.</li>
+    <li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html"><code>numpy.linalg.svd</code></a> or <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html"><code>sklearn.decomposition.TruncatedSVD</code></a> — the Python equivalents, one call each, if the no-Python constraint is lifted.</li>
+    <li><a href="https://eigen.tuxfamily.org/">Eigen</a> (C++) or <a href="https://github.com/dimforge/nalgebra">nalgebra</a> (Rust) — for a compiled implementation.</li>
+    <li><strong>Going further</strong> — non-negative matrix factorization (NMF) would be a better fit than SVD for alpha data, since it constrains the profiles to be non-negative and so cannot produce the out-of-range values that the <code>clamp</code> here has to absorb.</li>
+  </ul>
+  <p><strong>Other runtimes available on this machine</strong> — .NET is installed, so <code>System.Drawing.Common</code> or <a href="https://sixlabors.com/products/imagesharp/">ImageSharp</a> with <code>MathNet.Numerics</code> for the SVD would have been an equally valid non-Python route.</p>
+</section>
+
+<footer class="page">
+  <p>Sources: <code>MVP1/MATH.md</code>, <code>MVP1/PROCESS.md</code>, <code>MVP2/MATH.md</code>, <code>MVP2/analysis_report.json</code>, <code>MVP3/MATH.md</code>, <code>MVP3/analysis_report.json</code>, <code>MVP3/verification.json</code>. All figures were measured on the 46 samples in <code>Root/</code>; none are estimated.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+
+  function select(tab, setFocus) {
+    for (const other of tabs) {
+      const selected = other === tab;
+      other.setAttribute('aria-selected', String(selected));
+      other.tabIndex = selected ? 0 : -1;
+      document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
+    }
+    if (setFocus) tab.focus();
+    history.replaceState(null, '', '#' + tab.id.replace('tab-', ''));
+  }
+
+  tabs.forEach(function (tab, index) {
+    tab.addEventListener('click', function () { select(tab, false); });
+    tab.addEventListener('keydown', function (event) {
+      const keys = { ArrowLeft: -1, ArrowRight: 1, Home: 'first', End: 'last' };
+      if (!(event.key in keys)) return;
+      event.preventDefault();
+      const step = keys[event.key];
+      const next = step === 'first' ? 0
+        : step === 'last' ? tabs.length - 1
+        : (index + step + tabs.length) % tabs.length;
+      select(tabs[next], true);
+    });
+  });
+
+  const fromHash = document.getElementById('tab-' + location.hash.slice(1));
+  select(tabs.includes(fromHash) ? fromHash : tabs[0], false);
+})();
+</script>
+</body>
+</html>

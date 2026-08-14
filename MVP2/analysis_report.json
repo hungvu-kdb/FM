@@ -1,0 +1,1056 @@
+{
+  "sample_count": 46,
+  "image_width": 260,
+  "image_height": 310,
+  "method": "per-sample scalar fitting followed by coordinate-wise median aggregation",
+  "global_alpha_mae": 1.43306,
+  "absolute_error_percentiles": {
+    "p50": 0.0,
+    "p75": 0.0,
+    "p90": 2.79891,
+    "p95": 6.76247,
+    "p99": 25.887878,
+    "p99_9": 99.0
+  },
+  "per_sample_alpha_mae_distribution": {
+    "min": 1.350232,
+    "p05": 1.365415,
+    "p25": 1.38002,
+    "median": 1.436951,
+    "p75": 1.462088,
+    "p95": 1.479124,
+    "max": 1.810454
+  },
+  "per_sample_alpha_rmse_distribution": {
+    "min": 7.91364,
+    "p05": 7.916729,
+    "p25": 7.941125,
+    "median": 8.007263,
+    "p75": 8.105168,
+    "p95": 8.138735,
+    "max": 9.439417
+  },
+  "parameter_fit_distribution": {
+    "center_x": {
+      "min": 130.0,
+      "p05": 130.0,
+      "p25": 130.0,
+      "median": 130.0,
+      "p75": 130.0,
+      "p95": 130.0,
+      "max": 130.0
+    },
+    "center_y": {
+      "min": 154.5,
+      "p05": 154.5,
+      "p25": 154.5,
+      "median": 154.5,
+      "p75": 154.5,
+      "p95": 154.5,
+      "max": 154.5
+    },
+    "half_width": {
+      "min": 111.5,
+      "p05": 111.5,
+      "p25": 111.5,
+      "median": 111.5,
+      "p75": 111.5,
+      "p95": 111.5,
+      "max": 111.5
+    },
+    "half_height": {
+      "min": 138.0,
+      "p05": 138.0,
+      "p25": 138.0,
+      "median": 138.0,
+      "p75": 138.0,
+      "p95": 138.0,
+      "max": 138.0
+    },
+    "corner_radius": {
+      "min": 4.75,
+      "p05": 5.25,
+      "p25": 5.25,
+      "median": 5.25,
+      "p75": 5.25,
+      "p95": 5.25,
+      "max": 6.0
+    },
+    "edge_softness": {
+      "min": 0.7,
+      "p05": 1.0,
+      "p25": 1.0,
+      "median": 1.0,
+      "p75": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "content_alpha": {
+      "min": 255.0,
+      "p05": 255.0,
+      "p25": 255.0,
+      "median": 255.0,
+      "p75": 255.0,
+      "p95": 255.0,
+      "max": 255.0
+    },
+    "alpha_floor": {
+      "min": 0.0,
+      "p05": 0.0,
+      "p25": 0.0,
+      "median": 1.0,
+      "p75": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "halo_gap": {
+      "min": 9.0,
+      "p05": 9.0,
+      "p25": 9.0,
+      "median": 9.0,
+      "p75": 9.0,
+      "p95": 9.0,
+      "max": 9.25
+    },
+    "halo_sigma": {
+      "min": 2.55,
+      "p05": 2.95,
+      "p25": 2.95,
+      "median": 3.0,
+      "p75": 3.15,
+      "p95": 3.2,
+      "max": 3.25
+    },
+    "halo_peak": {
+      "min": 70.025953,
+      "p05": 70.726726,
+      "p25": 71.469891,
+      "median": 72.092695,
+      "p75": 74.060769,
+      "p95": 75.212193,
+      "max": 75.538138
+    }
+  },
+  "per_sample": [
+    {
+      "file": "1.png",
+      "alpha_mae": 1.438284,
+      "alpha_rmse": 8.022593,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 4.75,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 70.71677,
+        "corner_sign_error": 0.001931,
+        "edge_rmse": 7.805276
+      }
+    },
+    {
+      "file": "1000050.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "100007.png",
+      "alpha_mae": 1.374736,
+      "alpha_rmse": 7.943041,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 73.640924,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.559792
+      }
+    },
+    {
+      "file": "100013.png",
+      "alpha_mae": 1.452076,
+      "alpha_rmse": 7.925026,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.15,
+        "halo_peak": 71.745405,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.377035
+      }
+    },
+    {
+      "file": "100014.png",
+      "alpha_mae": 1.437615,
+      "alpha_rmse": 7.916202,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.15,
+        "halo_peak": 71.248565,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.400884
+      }
+    },
+    {
+      "file": "1000438.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1000483.png",
+      "alpha_mae": 1.425064,
+      "alpha_rmse": 8.03354,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.05,
+        "halo_peak": 70.442964,
+        "corner_sign_error": 0.001229,
+        "edge_rmse": 6.741839
+      }
+    },
+    {
+      "file": "1000488.png",
+      "alpha_mae": 1.421837,
+      "alpha_rmse": 8.0123,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 75.538138,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.567981
+      }
+    },
+    {
+      "file": "1000601.png",
+      "alpha_mae": 1.434485,
+      "alpha_rmse": 8.008204,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.15,
+        "halo_peak": 70.756592,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.39334
+      }
+    },
+    {
+      "file": "1000921.png",
+      "alpha_mae": 1.352598,
+      "alpha_rmse": 7.91831,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.073772,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.388676
+      }
+    },
+    {
+      "file": "1000924.png",
+      "alpha_mae": 1.810454,
+      "alpha_rmse": 9.439417,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 6.0,
+        "edge_softness": 0.7,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.25,
+        "halo_sigma": 2.55,
+        "halo_peak": 74.035037,
+        "corner_sign_error": 0.0,
+        "edge_rmse": 1.569459
+      }
+    },
+    {
+      "file": "1001579.png",
+      "alpha_mae": 1.374199,
+      "alpha_rmse": 7.939151,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.142864,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.592686
+      }
+    },
+    {
+      "file": "1001581.png",
+      "alpha_mae": 1.380555,
+      "alpha_rmse": 7.928627,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.219402,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.500876
+      }
+    },
+    {
+      "file": "1001583.png",
+      "alpha_mae": 1.443239,
+      "alpha_rmse": 8.004849,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.770247,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.4254
+      }
+    },
+    {
+      "file": "1001587.png",
+      "alpha_mae": 1.437147,
+      "alpha_rmse": 8.016967,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 71.317823,
+        "corner_sign_error": 0.001229,
+        "edge_rmse": 6.51586
+      }
+    },
+    {
+      "file": "1001589.png",
+      "alpha_mae": 1.444541,
+      "alpha_rmse": 8.015915,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.565766,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.496535
+      }
+    },
+    {
+      "file": "1001591.png",
+      "alpha_mae": 1.43904,
+      "alpha_rmse": 8.012308,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.063825,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.474638
+      }
+    },
+    {
+      "file": "1002273.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1002291.png",
+      "alpha_mae": 1.379842,
+      "alpha_rmse": 7.936977,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 73.752263,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.515702
+      }
+    },
+    {
+      "file": "100236.png",
+      "alpha_mae": 1.436754,
+      "alpha_rmse": 8.02114,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 73.275318,
+        "corner_sign_error": 0.002633,
+        "edge_rmse": 6.437868
+      }
+    },
+    {
+      "file": "1002433.png",
+      "alpha_mae": 1.479124,
+      "alpha_rmse": 8.141965,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.25,
+        "halo_peak": 72.020657,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.378825
+      }
+    },
+    {
+      "file": "1002443.png",
+      "alpha_mae": 1.38468,
+      "alpha_rmse": 7.962188,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 72.353017,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.882882
+      }
+    },
+    {
+      "file": "1002454.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1002457.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1002678.png",
+      "alpha_mae": 1.479124,
+      "alpha_rmse": 8.141965,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.25,
+        "halo_peak": 72.020657,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.378825
+      }
+    },
+    {
+      "file": "1002811.png",
+      "alpha_mae": 1.437615,
+      "alpha_rmse": 7.916202,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.15,
+        "halo_peak": 71.248565,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.400884
+      }
+    },
+    {
+      "file": "1002842.png",
+      "alpha_mae": 1.364468,
+      "alpha_rmse": 7.948167,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 71.015749,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.657786
+      }
+    },
+    {
+      "file": "1002918.png",
+      "alpha_mae": 1.368257,
+      "alpha_rmse": 7.944369,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 70.025953,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.624685
+      }
+    },
+    {
+      "file": "1003050.png",
+      "alpha_mae": 1.377022,
+      "alpha_rmse": 7.930387,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.051602,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.507514
+      }
+    },
+    {
+      "file": "1003052.png",
+      "alpha_mae": 1.350232,
+      "alpha_rmse": 7.927989,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 70.876147,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.578488
+      }
+    },
+    {
+      "file": "1003345.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1003362.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1003681.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1003685.png",
+      "alpha_mae": 1.462088,
+      "alpha_rmse": 8.129045,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.2,
+        "halo_peak": 72.092695,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.40104
+      }
+    },
+    {
+      "file": "1003790.png",
+      "alpha_mae": 1.429817,
+      "alpha_rmse": 8.006028,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 75.538138,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.460702
+      }
+    },
+    {
+      "file": "100438.png",
+      "alpha_mae": 1.432207,
+      "alpha_rmse": 8.016892,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 75.067706,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.49104
+      }
+    },
+    {
+      "file": "10047.png",
+      "alpha_mae": 1.500711,
+      "alpha_rmse": 7.961335,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.05,
+        "halo_peak": 71.463717,
+        "corner_sign_error": 0.001755,
+        "edge_rmse": 6.652584
+      }
+    },
+    {
+      "file": "1004803.png",
+      "alpha_mae": 1.423252,
+      "alpha_rmse": 8.012029,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 4.75,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 71.106292,
+        "corner_sign_error": 0.001755,
+        "edge_rmse": 7.871833
+      }
+    },
+    {
+      "file": "10048698.png",
+      "alpha_mae": 1.377718,
+      "alpha_rmse": 7.953443,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 71.859088,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.578315
+      }
+    },
+    {
+      "file": "1004926.png",
+      "alpha_mae": 1.43449,
+      "alpha_rmse": 8.006323,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.9,
+        "halo_peak": 75.260355,
+        "corner_sign_error": 0.001229,
+        "edge_rmse": 6.535781
+      }
+    },
+    {
+      "file": "1004936.png",
+      "alpha_mae": 1.372741,
+      "alpha_rmse": 7.935533,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 2.95,
+        "halo_peak": 74.142864,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.534889
+      }
+    },
+    {
+      "file": "1004968.png",
+      "alpha_mae": 1.377499,
+      "alpha_rmse": 7.941617,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 71.488413,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.496108
+      }
+    },
+    {
+      "file": "1004972.png",
+      "alpha_mae": 1.378328,
+      "alpha_rmse": 7.940961,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 71.452541,
+        "corner_sign_error": 0.001755,
+        "edge_rmse": 6.542019
+      }
+    },
+    {
+      "file": "1005015.png",
+      "alpha_mae": 1.420004,
+      "alpha_rmse": 7.992434,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 71.710729,
+        "corner_sign_error": 0.001404,
+        "edge_rmse": 6.393081
+      }
+    },
+    {
+      "file": "1005066.png",
+      "alpha_mae": 1.440145,
+      "alpha_rmse": 8.029178,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 6.0,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 1.0,
+        "halo_gap": 9.25,
+        "halo_sigma": 3.0,
+        "halo_peak": 73.692034,
+        "corner_sign_error": 0.001229,
+        "edge_rmse": 5.547508
+      }
+    },
+    {
+      "file": "10051.png",
+      "alpha_mae": 1.452069,
+      "alpha_rmse": 7.91364,
+      "fit": {
+        "center_x": 130.0,
+        "center_y": 154.5,
+        "half_width": 111.5,
+        "half_height": 138.0,
+        "corner_radius": 5.25,
+        "edge_softness": 1.0,
+        "content_alpha": 255.0,
+        "alpha_floor": 0.0,
+        "halo_gap": 9.0,
+        "halo_sigma": 3.0,
+        "halo_peak": 74.452057,
+        "corner_sign_error": 0.00158,
+        "edge_rmse": 6.591638
+      }
+    }
+  ]
+}
